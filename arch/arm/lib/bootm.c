@@ -283,7 +283,7 @@ bool armv7_boot_nonsec(void)
 /* Subcommand: GO */
 static void boot_jump_linux(bootm_headers_t *images, int flag)
 {
-	debug("## boot_jump_linux\n");
+	printf("## boot_jump_linux\n");
 #ifdef CONFIG_ARM64
 	void (*kernel_entry)(void *fdt_addr, void *res0, void *res1,
 			void *res2);
@@ -293,7 +293,7 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 				void *res2))images->ep;
 
 # ifndef CONFIG_BOOT_ATF
-	debug("## Transferring control to Linux (at address %lx) (dtb at %lx)...\n",
+	printf("## Transferring control to Linux (at address %lx) (dtb at %lx)...\n",
 	      (ulong) kernel_entry,
 	      (ulong) images->ft_addr);
 # endif
@@ -316,7 +316,7 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 
 	  ap = getenv("atf_load_addr");
 	  if (ap) {
-	    debug("## Got atf_load_addr %lx\n", (ulong) ap);
+	    printf("## Got atf_load_addr %lx\n", (ulong) ap);
 	    char *ptr;
 	    atf_addr = ustrtoul(ap, &ptr, 16);
 	    get_spin_addr = atf_addr + 4;
@@ -325,7 +325,7 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 
 	  ap = getenv("tee_load_addr");
 	  if (ap) {
-            debug("## Got tee_load_addr %lx\n", (ulong) ap);
+		printf("## Got tee_load_addr %lx\n", (ulong) ap);
 	    char *ptr;
 	    tee_addr = ustrtoul(ap, &ptr, 16);
 	  }
@@ -358,7 +358,7 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 		 (ulong) images->ft_addr);
 # endif
 		do_nonsec_virt_switch();
-		debug("## Done do_nonsec_virt_switch");
+		printf("## Done do_nonsec_virt_switch");
 		kernel_entry(images->ft_addr, NULL, NULL, NULL);
 	}
 #else
@@ -369,7 +369,7 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 	int fake = (flag & BOOTM_STATE_OS_FAKE_GO);
 
 	kernel_entry = (void (*)(int, int, uint))images->ep;
-        debug("## Got kernel entry address from images->ep");
+	printf("## Got kernel entry address from images->ep");
 
 	s = getenv("machid");
 	if (s) {
@@ -380,7 +380,7 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 		printf("Using machid 0x%lx from environment\n", machid);
 	}
 
-	debug("## Transferring control to Linux (at address %08lx)" \
+	printf("## Transferring control to Linux (at address %08lx)" \
 		"...\n", (ulong) kernel_entry);
 	bootstage_mark(BOOTSTAGE_ID_RUN_OS);
 	announce_and_cleanup(fake);
@@ -393,13 +393,13 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 	if (!fake) {
 #ifdef CONFIG_ARMV7_NONSEC
 		if (armv7_boot_nonsec()) {
-			debug("## Booting non-secure");
+			printf("## Booting non-secure");
 			armv7_init_nonsec();
 			secure_ram_addr(_do_nonsec_entry)(kernel_entry,
 							  0, machid, r2);
 		} else
 #endif
-			debug("## Booting secure");
+			printf("## Booting secure");
 			kernel_entry(0, machid, r2);
 	}
 #endif
