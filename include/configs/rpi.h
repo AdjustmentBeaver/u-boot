@@ -225,3 +225,5 @@
 #define CONFIG_BOOTDELAY 2
 
 #endif
+
+#define CONFIG_SYS_BOOTM_LEN (32 << 20)
