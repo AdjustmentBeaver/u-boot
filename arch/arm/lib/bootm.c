@@ -283,7 +283,6 @@ bool armv7_boot_nonsec(void)
 /* Subcommand: GO */
 static void boot_jump_linux(bootm_headers_t *images, int flag)
 {
-	printf("## boot_jump_linux\n");
 #ifdef CONFIG_ARM64
 	void (*kernel_entry)(void *fdt_addr, void *res0, void *res1,
 			void *res2);
@@ -316,7 +315,6 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 
 	  ap = getenv("atf_load_addr");
 	  if (ap) {
-	    printf("## Got atf_load_addr %lx\n", (ulong) ap);
 	    char *ptr;
 	    atf_addr = ustrtoul(ap, &ptr, 16);
 	    get_spin_addr = atf_addr + 4;
@@ -325,7 +323,6 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 
 	  ap = getenv("tee_load_addr");
 	  if (ap) {
-		printf("## Got tee_load_addr %lx\n", (ulong) ap);
 	    char *ptr;
 	    tee_addr = ustrtoul(ap, &ptr, 16);
 	  }
@@ -358,7 +355,6 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 		 (ulong) images->ft_addr);
 # endif
 		do_nonsec_virt_switch();
-		printf("## Done do_nonsec_virt_switch");
 		kernel_entry(images->ft_addr, NULL, NULL, NULL);
 	}
 #else
@@ -369,7 +365,6 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 	int fake = (flag & BOOTM_STATE_OS_FAKE_GO);
 
 	kernel_entry = (void (*)(int, int, uint))images->ep;
-	printf("## Got kernel entry address from images->ep");
 
 	s = getenv("machid");
 	if (s) {
@@ -393,13 +388,11 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 	if (!fake) {
 #ifdef CONFIG_ARMV7_NONSEC
 		if (armv7_boot_nonsec()) {
-			printf("## Booting non-secure");
 			armv7_init_nonsec();
 			secure_ram_addr(_do_nonsec_entry)(kernel_entry,
 							  0, machid, r2);
 		} else
 #endif
-			printf("## Booting secure");
 			kernel_entry(0, machid, r2);
 	}
 #endif
